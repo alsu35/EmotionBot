@@ -355,11 +355,11 @@ async def audio_menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # база аудиофайлов
 AUDIO_LIBRARY = {
     "rain": {
-        "file": os.path.abspath(os.path.join("C:/EmotionBot/music", "rain.mp3")), 
+        "file": os.path.abspath(os.path.join("music", "rain.mp3")), 
         "duration": 53
     },
     "forest": {
-        "file": os.path.abspath(os.path.join("C:/EmotionBot/music", "forest.mp3")),
+        "file": os.path.abspath(os.path.join("music", "forest.mp3")),
         "duration": 329
     }
 }
