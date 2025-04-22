@@ -407,8 +407,7 @@ async def handle_emotion(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await query.message.edit_text(
         text=message,
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("Ещё рекомендация", callback_data=f"more_{emotion_key}")],
-            [InlineKeyboardButton("Главное меню", callback_data="back_to_menu")]
+            [InlineKeyboardButton("Ещё рекомендация", callback_data=f"more_{emotion_key}")]
         ])
     )
     
@@ -416,22 +415,27 @@ async def handle_emotion(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def more_advice(update: Update, context: ContextTypes.DEFAULT_TYPE):
     query = update.callback_query
     emotion_key = query.data.split("_")[1]
-    
+
     emotion = EMOTION_MAPPING.get(emotion_key, None)
-    
+
     if not emotion:
         await query.answer("Ошибка: эмоция не найдена")
         return
-    
+
+    # Выбираем случайный совет для эмоции
     advice = random.choice(EMOTION_ADVICE[emotion])
     
+    # Форматируем текст совета
+    advice_text = format_advice(advice)
+
+    # Отправляем отформатированное сообщение с рекомендацией
     await query.edit_message_text(
-        text=f"🔍 Ещё одна рекомендация:\n\n{advice}",
+        text=f"🔍 Ещё одна рекомендация:\n\n{advice_text}",
         reply_markup=InlineKeyboardMarkup([
-            [InlineKeyboardButton("Ещё рекомендация", callback_data=f"more_{emotion_key}")],
-            [InlineKeyboardButton("Главное меню", callback_data="back_to_menu")]
+            [InlineKeyboardButton("Ещё рекомендация", callback_data=f"more_{emotion_key}")]
         ])
-    )       
+    )
+
     
 # обработчики теста
 async def anxiety_test(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -638,6 +642,7 @@ async def main():
     app.add_handler(CallbackQueryHandler(breathing_cooling, pattern="^breathing_cooling$"))
     app.add_handler(CallbackQueryHandler(breathing_tension, pattern="^breathing_tension$"))
     app.add_handler(CallbackQueryHandler(breathing_heart, pattern="^breathing_heart$"))
+    app.add_handler(CallbackQueryHandler(more_advice, pattern=r"^more_"))
     
     # обработчики для теста
     app.add_handler(CallbackQueryHandler(handle_test_answer, pattern="start_test|prev_question|^[0-3]$"))
